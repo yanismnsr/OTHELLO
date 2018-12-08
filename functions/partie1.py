@@ -16,7 +16,7 @@ def indice_valide(plateau, indice):
     indice_valide(p, 18) # retourne False
     """
     lim = plateau["n"]
-    if indice < lim :
+    if 0 <= indice < lim :
         return True
     return False
 
@@ -154,89 +154,11 @@ def afficher_plateau (plateau):
                 else :
                     ligne += get_pion(plateau, i, k)
             print(ligne)
-                
 
 
 
 
 
-def afficher_plateau_premier_essai(plateau):
-    """Affiche le plateau à l'écran. """
-
-    # dictionnaire pour convertir les indices des lignes en lettres correspondantes
-    dico_lettres = {0 : 'a', 1 : 'b' , 2 : 'c' , 3 : 'd' , 4 : 'e' , 5 : 'f' , 6 : 'g' , 7 : 'g'}
-    taille = plateau["n"]
-    tab = plateau["cases"]
-    assert taille == 4 or taille == 6 or taille == 8, "l'indice n'est pas valide"
-    ligne = '   '
-    for i in range(taille) :
-        ligne += '   ' + str(i+1) + '   '
-    print(ligne)
-
-    # premiere boucle qui parcourt les lignes 
-    for i in range(taille):
-
-        # cette boucle fait 3 fois la succession des couleurs afin d'avoir 
-        # un bon affichage 
-        for j in range(3):
-            if j%2 == 0 :
-                ligne = '   '
-            else :
-                ligne = ' ' + dico_lettres [i] + ' '
-            # cette boucle parcourt les colonnes
-            for k in range(taille):
-                # si la ligne est pair alors on commence avec le magenta
-                if i%2 == 0 :
-                    # si la colonne k est pair alors on met du bleu sinon on met du magenta 
-                    if k%2 == 0:
-                        # j designe les 3 sous-lignes qui forment chaque ligne i 
-                        # si j est pair alors on concataine à la variable ligne a 7 espaces (taille d'un carré) à chaque fois
-                        # sinon on lui concataine 3 espace + la lettre de la ligne + 3 espace 
-                        if j%2 == 0 :
-                            ligne += colored('       ', None, 'on_magenta')
-                        else :
-                            if get_case(plateau, i, k) == 1 :
-                                ligne += colored('  ###  ' , 'grey', 'on_magenta', attrs = ['dark'])
-                            elif get_case(plateau, i, k) == 0 :
-                                ligne += colored('       ', None, 'on_magenta')
-                            else :
-                                ligne += colored('  ###  ', None, 'on_magenta')
-                    else :
-                        if j%2 == 0:
-                            ligne += colored('       ', None, 'on_blue')
-                        else :
-                            if get_case(plateau, i, k) == 1:
-                                ligne += colored('  ###  ' , 'grey', 'on_blue', attrs = ['dark'])
-                            elif get_case(plateau, i, k) == 0 :
-                                ligne += colored('       ', None, 'on_blue')
-                            else :
-                                ligne += colored('  ###  ', None, 'on_blue')
-                
-                # si la ligne est impair alors on commence par le bleu 
-                else:
-                    if k%2 == 0 :
-                        if j%2 == 0:
-                            ligne += colored('       ', None, 'on_blue')
-                        else :
-                            if get_case(plateau, i, k) == 1:
-                                ligne += colored('  ###  ' , 'grey', 'on_blue', attrs = ['dark'])
-                            elif get_case(plateau, i, k) == 0 :
-                                ligne += colored('       ', None, 'on_blue')
-                            else :
-                                ligne += colored('  ###  ', 'white', 'on_blue')
-                    else :
-                        if j%2 == 0 :
-                            ligne += colored('       ', None, 'on_magenta')
-                        else :
-                            if get_case(plateau, i, k) == 1 :
-                                ligne += colored('  ###  ' , 'grey', 'on_magenta', attrs = ['dark'])
-                            elif get_case(plateau, i, k) == 0 :
-                                ligne += colored('       ', None, 'on_magenta')
-                            else :
-                                ligne += colored('  ###  ', None, 'on_magenta')
-            print(ligne)
-            
-            
 
 
 
