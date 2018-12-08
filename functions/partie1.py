@@ -66,6 +66,7 @@ def set_case(plateau, i, j, val):
     set_case(p,2,3,6) # lève une erreur
     """
     assert case_valide(plateau, i, j), "l'indice n'est pas valide"
+    assert 0 <= val <= 2 , "la valeure indiquée n'est pas entre 0 et 2"
     tab = plateau["cases"]
     taille = plateau["n"]
     tab[i*taille+j] = val
@@ -86,13 +87,12 @@ def creer_plateau(n):
     assert n == 4 or n == 6 or n == 8, "la valeure donnée n'est pas une taille de plateau possible"
     plateau = {}
     plateau["n"] = n
-    plateau["cases"] = []
-    tab = plateau["cases"]
     taille = n*n
-    i = 0
-    for i in range(taille):
-        tab.append(0)
-        i += 1
+    plateau["cases"] = [0] * taille
+    tab = plateau["cases"]
+    
+
+
     i = n//2 - 1
     j = n//2 - 1
     set_case(plateau, i, j, 2)
@@ -101,42 +101,77 @@ def creer_plateau(n):
     j = n//2 - 1
     set_case(plateau, i, j, 1)
     set_case(plateau, i, j+1, 2)
-    return plateau
-
-
-def int_convert(n):
-    """cette fonction prend un entier en paramètre et renvoie la lettre 
-    correspondante de façon à ce que ce soit adapté à la ligne verticale 
-    l'affichage"""
-    if n == 0 :
-        return 'a'
-    if n == 1 :
-        return 'b'
-    if n == 2 :
-        return 'c'
-    if n == 3 :
-        return 'd'
-    if n == 4 :
-        return 'e'
-    if n == 5 :
-        return 'f'
-    if n == 6 :
-        return 'g'
-    if n == 7 :
-        return 'h'
+    return plateau 
 
 
 
-def afficher_plateau(plateau):
-    """Affiche le plateau à l'écran. """
+
+
+def on_color(i, j):
+    if i%2 == j%2:
+        return 'on_magenta'
+    else :
+        return 'on_cyan'
+
+
+
+def get_pion(plateau , i, j):
+    onColor = on_color(i, j)
+    taille = plateau['n']
+    tab = plateau['cases']
+    if get_case(plateau, i, j) == 1:
+        return colored('  ###  ', 'grey', onColor, attrs=['dark'])
+    elif get_case(plateau, i, j) == 2 :
+        return colored("  ###  ", None, onColor)
+    else :
+        return colored('       ', None , onColor)
+
+
+def get_chaine_init(indice_sous_ligne, indice_ligne):
+    dico_lettres = {0 : 'a', 1 : 'b' , 2 : 'c' , 3 : 'd' , 4 : 'e' , 5 : 'f' , 6 : 'g' , 7 : 'g'}
+    if indice_sous_ligne%2 == 0:
+        return '   '
+    else :
+        return ' ' + dico_lettres[indice_ligne] +' '
+
+
+
+def afficher_plateau (plateau):
+    # dictionnaire pour convertir les indices des lignes en lettres correspondantes
     taille = plateau["n"]
     tab = plateau["cases"]
     assert taille == 4 or taille == 6 or taille == 8, "l'indice n'est pas valide"
-    chaine = '   '
+    ligne = '   '
     for i in range(taille) :
-        chaineConcat = '   ' + str(i+1) + '   '
-        chaine += chaineConcat
-    print(chaine)
+        ligne += '   ' + str(i+1) + '   '
+    print(ligne)
+    for i in range(taille):
+        for j in range(3):
+            ligne = get_chaine_init(j, i)
+            for k in range(taille):
+                if j%2 == 0:
+                    ligne += colored('       ', None, on_color(i, k))
+                else :
+                    ligne += get_pion(plateau, i, k)
+            print(ligne)
+                
+
+
+
+
+
+def afficher_plateau_premier_essai(plateau):
+    """Affiche le plateau à l'écran. """
+
+    # dictionnaire pour convertir les indices des lignes en lettres correspondantes
+    dico_lettres = {0 : 'a', 1 : 'b' , 2 : 'c' , 3 : 'd' , 4 : 'e' , 5 : 'f' , 6 : 'g' , 7 : 'g'}
+    taille = plateau["n"]
+    tab = plateau["cases"]
+    assert taille == 4 or taille == 6 or taille == 8, "l'indice n'est pas valide"
+    ligne = '   '
+    for i in range(taille) :
+        ligne += '   ' + str(i+1) + '   '
+    print(ligne)
 
     # premiere boucle qui parcourt les lignes 
     for i in range(taille):
@@ -145,57 +180,61 @@ def afficher_plateau(plateau):
         # un bon affichage 
         for j in range(3):
             if j%2 == 0 :
-                chaine = '   '
+                ligne = '   '
             else :
-                chaine = ' ' + int_convert(i) + ' '
+                ligne = ' ' + dico_lettres [i] + ' '
             # cette boucle parcourt les colonnes
             for k in range(taille):
                 # si la ligne est pair alors on commence avec le magenta
                 if i%2 == 0 :
+                    # si la colonne k est pair alors on met du bleu sinon on met du magenta 
                     if k%2 == 0:
+                        # j designe les 3 sous-lignes qui forment chaque ligne i 
+                        # si j est pair alors on concataine à la variable ligne a 7 espaces (taille d'un carré) à chaque fois
+                        # sinon on lui concataine 3 espace + la lettre de la ligne + 3 espace 
                         if j%2 == 0 :
-                            chaine += colored('       ', None, 'on_magenta')
+                            ligne += colored('       ', None, 'on_magenta')
                         else :
                             if get_case(plateau, i, k) == 1 :
-                                chaine += colored('  ###  ' , 'grey', 'on_magenta')
+                                ligne += colored('  ###  ' , 'grey', 'on_magenta', attrs = ['dark'])
                             elif get_case(plateau, i, k) == 0 :
-                                chaine += colored('       ', None, 'on_magenta')
+                                ligne += colored('       ', None, 'on_magenta')
                             else :
-                                chaine += colored('  ###  ', None, 'on_magenta')
+                                ligne += colored('  ###  ', None, 'on_magenta')
                     else :
                         if j%2 == 0:
-                            chaine += colored('       ', None, 'on_blue')
+                            ligne += colored('       ', None, 'on_blue')
                         else :
                             if get_case(plateau, i, k) == 1:
-                                chaine += colored('  ###  ' , 'grey', 'on_blue')
+                                ligne += colored('  ###  ' , 'grey', 'on_blue', attrs = ['dark'])
                             elif get_case(plateau, i, k) == 0 :
-                                chaine += colored('       ', None, 'on_blue')
+                                ligne += colored('       ', None, 'on_blue')
                             else :
-                                chaine += colored('  ###  ', 'white', 'on_blue')
+                                ligne += colored('  ###  ', None, 'on_blue')
                 
                 # si la ligne est impair alors on commence par le bleu 
                 else:
                     if k%2 == 0 :
                         if j%2 == 0:
-                            chaine += colored('       ', None, 'on_blue')
+                            ligne += colored('       ', None, 'on_blue')
                         else :
                             if get_case(plateau, i, k) == 1:
-                                chaine += colored('  ###  ' , 'grey', 'on_blue')
+                                ligne += colored('  ###  ' , 'grey', 'on_blue', attrs = ['dark'])
                             elif get_case(plateau, i, k) == 0 :
-                                chaine += colored('       ', None, 'on_blue')
+                                ligne += colored('       ', None, 'on_blue')
                             else :
-                                chaine += colored('  ###  ', 'white', 'on_blue')
+                                ligne += colored('  ###  ', 'white', 'on_blue')
                     else :
                         if j%2 == 0 :
-                            chaine += colored('       ', None, 'on_magenta')
+                            ligne += colored('       ', None, 'on_magenta')
                         else :
                             if get_case(plateau, i, k) == 1 :
-                                chaine += colored('  ###  ' , 'grey', 'on_magenta')
+                                ligne += colored('  ###  ' , 'grey', 'on_magenta', attrs = ['dark'])
                             elif get_case(plateau, i, k) == 0 :
-                                chaine += colored('       ', None, 'on_magenta')
+                                ligne += colored('       ', None, 'on_magenta')
                             else :
-                                chaine += colored('  ###  ', None, 'on_magenta')
-            print(chaine)
+                                ligne += colored('  ###  ', None, 'on_magenta')
+            print(ligne)
             
             
 
