@@ -1,9 +1,10 @@
-#j'ai eu quelques difficultés à telecharger la bibliothèque termcolor, 
-# en conséquence, j'ai directement telechargé le module et je l'ai placé 
+#j'ai eu quelques difficultés à telecharger la bibliothèque termcolor,
+# en conséquence, j'ai directement telechargé le module et je l'ai placé
 # dans le meme repertoire que ce fichier
-import sys
-sys.path.append("./termcolor-master")
 from termcolor import *
+#import sys
+#sys.path.append("./termcolor-master")
+#from termcolor import *
 
 
 def indice_valide(plateau, indice):
@@ -16,9 +17,7 @@ def indice_valide(plateau, indice):
     indice_valide(p, 18) # retourne False
     """
     lim = plateau["n"]
-    if 0 <= indice < lim :
-        return True
-    return False
+    return 0 <= indice < lim
 
 
 
@@ -31,9 +30,7 @@ def case_valide(plateau, i, j) :
     case_valide(p,3,3) # retourne True
     case_valide(p,18,3) # retourne False
     """
-    if indice_valide(plateau,i) and indice_valide(plateau, j):
-        return True 
-    return False
+    return indice_valide(plateau,i) and indice_valide(plateau, j)
 
 
 
@@ -90,8 +87,6 @@ def creer_plateau(n):
     taille = n*n
     plateau["cases"] = [0] * taille
     tab = plateau["cases"]
-    
-
 
     i = n//2 - 1
     j = n//2 - 1
@@ -101,13 +96,17 @@ def creer_plateau(n):
     j = n//2 - 1
     set_case(plateau, i, j, 1)
     set_case(plateau, i, j+1, 2)
-    return plateau 
+    return plateau
 
 
 
 
 
 def on_color(i, j):
+    """
+    fonction qui permet de définir la couleur du font en fonction de
+    la parité de la case
+    """
     if i%2 == j%2:
         return 'on_magenta'
     else :
@@ -115,7 +114,12 @@ def on_color(i, j):
 
 
 
+
 def get_pion(plateau , i, j):
+    """
+    fonction qui retourne la chaine de caractère a mettre dans chaque case
+    en fonction du numéro du joueur
+    """
     onColor = on_color(i, j)
     taille = plateau['n']
     tab = plateau['cases']
@@ -124,33 +128,50 @@ def get_pion(plateau , i, j):
     elif get_case(plateau, i, j) == 2 :
         return colored("  ###  ", None, onColor)
     else :
-        return colored('       ', None , onColor)
+        return colored(' ' * 7, None , onColor)
 
 
 def get_chaine_init(indice_sous_ligne, indice_ligne):
-    dico_lettres = {0 : 'a', 1 : 'b' , 2 : 'c' , 3 : 'd' , 4 : 'e' , 5 : 'f' , 6 : 'g' , 7 : 'g'}
+    """
+    retourne le caractère à mettre au debut de chaque ligne en fonction
+    de la ligne et la sous_ligne
+    La sous_ligne prend les valeurs 0, 1 ou 2 ; car chaque ligne est composée
+    de 3 sous_lignes
+    """
+    # dictionnaire qui permet de determiner la lettre correspondante au numéro
+    # de la ligne
+    dico_lettres = {0 : 'a', 1 : 'b' , 2 : 'c' , 3 : 'd' , 4 : 'e' , 5 : 'f' , 6 : 'g' , 7 : 'h'}
     if indice_sous_ligne%2 == 0:
-        return '   '
+        return ' ' * 3
     else :
         return ' ' + dico_lettres[indice_ligne] +' '
 
 
 
 def afficher_plateau (plateau):
-    # dictionnaire pour convertir les indices des lignes en lettres correspondantes
+    """
+    fait l'affichage du plateau
+    """
     taille = plateau["n"]
-    tab = plateau["cases"]
     assert taille == 4 or taille == 6 or taille == 8, "l'indice n'est pas valide"
-    ligne = '   '
+    tab = plateau["cases"]
+    ligne = ' ' * 3
+
+    # boucle qui affiche la premiere ligne des numéros de colonne
     for i in range(taille) :
-        ligne += '   ' + str(i+1) + '   '
+        ligne += ' ' * 3 + str(i+1) + ' ' * 3
     print(ligne)
+
+    # boucle qui parcourt les lignes
     for i in range(taille):
+        # boucle qui parcourt 3 fois chaque ligne (une ligne est composée de 3
+        # sous-lignes)
         for j in range(3):
-            ligne = get_chaine_init(j, i)
+            ligne = get_chaine_init(j, i)      # initialisation de la sous-ligne
+            # boucle qui parcourt les colonnes
             for k in range(taille):
                 if j%2 == 0:
-                    ligne += colored('       ', None, on_color(i, k))
+                    ligne += colored(' ' * 7, None, on_color(i, k))
                 else :
                     ligne += get_pion(plateau, i, k)
             print(ligne)
@@ -164,10 +185,14 @@ def afficher_plateau (plateau):
 
 if __name__ == "__main__" :
     dico = creer_plateau(8)
+    print("test de la fonction afficher_plateau")
     afficher_plateau(dico)
 
 
-    #test de la fonction indice valide 
+    print("")
+
+
+    #test de la fonction indice valide
     print('test de la fonction indice_valide')
     dico = creer_plateau(4)
     if indice_valide(dico, 1) and not indice_valide(dico, 4) :
@@ -176,9 +201,9 @@ if __name__ == "__main__" :
         print(False)
 
 
+    print("")
 
-
-    #test de la fonction case valide 
+    #test de la fonction case valide
     print('test de la fonction case_valide')
     dico = creer_plateau(4)
     if case_valide(dico, 3, 3) and not case_valide(dico, 4,5):
@@ -187,6 +212,7 @@ if __name__ == "__main__" :
         print(False)
 
 
+    print("")
 
 
     #test de la fonction get_case
@@ -196,7 +222,7 @@ if __name__ == "__main__" :
     else :
         print(False)
 
-
+    print("")
 
     # test de la fonction set_case
     print('test de la fonction set_case')
@@ -205,10 +231,9 @@ if __name__ == "__main__" :
         print(True)
     else :
         print(False)
-    
+
     afficher_plateau(dico)
 
 
     # la fonction creer_plateau fonctionne bien puisqu'on l'a utilisé en premier
-    # et le reste des fonctions fonctionnent correctement 
-
+    # et le reste des fonctions fonctionnent correctement
